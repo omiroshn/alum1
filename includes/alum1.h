@@ -15,8 +15,18 @@
 
 #include "libft.h"
 
+typedef struct		s_node
+{
+	int				number;
+	struct s_node	*next;
+}					t_node;
+
 typedef struct	s_alum
 {
+	t_node	*head;
+	t_node	*tail;
+	int		max;
+	int		length;
 	short	player;
 }				t_alum;
 
