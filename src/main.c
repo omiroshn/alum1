@@ -123,6 +123,5 @@ int		main(int argc, char **argv)
 		play_against_person(alum);
 	else
 		ft_error("Error. Wrong player.");
-	system("leaks alum1");
 	return (0);
 }

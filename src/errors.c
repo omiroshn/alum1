@@ -15,14 +15,12 @@
 void	ft_usage(void)
 {
 	ft_printf("./alum1 [FILE]\n");
-	system("leaks alum1");
 	exit(1);
 }
 
 void	ft_error(char *msg)
 {
 	ft_printf("%s\n", msg);
-	system("leaks alum1");
 	exit(-1);
 }
 
