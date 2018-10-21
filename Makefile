@@ -12,13 +12,12 @@
 
 NAME = alum1
 CC = clang
-FILES = main
+FILES = main init errors list ai person
 LIBFT_DIR = libft/
 SRC = $(addprefix src/, $(addsuffix .c, $(FILES)))
 OBJ = $(addprefix obj/, $(addsuffix .o, $(FILES)))
 OBJ_LIST = $(addsuffix .o, $(FILES))
-# FLAGS = -Wall -Wextra -Werror -O3
-FLAGS = -g
+FLAGS = -Wall -Wextra -Werror -O3
 HEADERS = -I./includes -I./libft/includes -I./libft/ft_printf/includes
 HEADER = ./includes/alum1.h
 

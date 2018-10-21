@@ -12,20 +12,6 @@
 
 #include "alum1.h"
 
-void	ft_usage()
-{
-	ft_printf("./alum1 [FILE]\n");
-	system("leaks alum1");
-	exit(1);
-}
-
-void	ft_error(char *msg)
-{
-	ft_printf("%s\n", msg);
-	system("leaks alum1");
-	exit(-1);
-}
-
 void	versus_who(struct s_alum *alum)
 {
 	char *line;
@@ -36,91 +22,21 @@ void	versus_who(struct s_alum *alum)
 		&& ft_strcmp(line, "1") && ft_strcmp(line, "2"))
 	{
 		ft_printf("Wrong, try again!\n");
-		free(line);		
+		free(line);
 	}
 	if (!line)
 		exit(0);
 	if (!ft_strcmp(line, "1"))
 	{
 		alum->player = 1;
-		ft_printf("You've chosen AI.\n");
+		ft_printf("\033[1;33mYou've chosen AI.\n\033[0m");
 	}
 	else
 	{
 		alum->player = 2;
-		ft_printf("You've chosen other player.\n");
+		ft_printf("\033[1;33mYou've chosen other player.\n\033[0m");
 	}
 	free(line);
-}
-
-int		check_string(char *line)
-{
-	int i;
-
-	i = -1;
-	while (line[++i])
-		if (!ft_isdigit(line[i]))
-			return (0);
-	return (1);
-}
-
-int		get_max(t_node *head)
-{
-	int		max;
-	t_node	*step;
-
-	max = 0;
-	step = head;
-	while (step != NULL)
-	{
-		if (step->number > max)
-			max = step->number;
-		step = step->next;
-	}
-	return (max);
-}
-
-void	print_list(t_alum *alum)
-{
-	int		j;
-	int		i;
-	int		max;
-	t_node	*step;
-
-	// max = get_max(alum->head);
-	max = alum->max;
-	step = alum->head;
-	j = -1;
-	while (step != NULL && ++j < alum->length)
-	{
-		if (step->number != max)
-			ft_printf("%*s", (max - step->number) / 2, "");
-		i = -1;
-		while (++i < step->number)
-			ft_printf("|");
-		ft_printf("\n");
-		step = step->next;
-	}
-}
-
-void	enqueue(struct s_alum *alum, int num)
-{
-	t_node *node;
-
-	node = (t_node*)malloc(sizeof(t_node));
-	node->number = num;
-	node->next = NULL;
-	if (alum->tail == NULL)
-	{
-		alum->tail = node;
-		alum->head = alum->tail;
-	}
-	else
-	{
-		alum->tail->next = node;
-		alum->tail = alum->tail->next;
-	}
-	alum->length++;
 }
 
 void	parse_map_from_stdin(struct s_alum *alum)
@@ -168,82 +84,27 @@ void	parse_map_from_file(struct s_alum *alum, char *path)
 	free(line);
 }
 
-void	alum_init(struct s_alum *alum)
-{
-	alum->head = NULL;
-	alum->tail = NULL;
-	alum->player = 1;
-	alum->length = 0;
-	alum->max = 0;
-}
-
 void	ft_put_choice(int matches)
 {
 	if (matches == 1)
 	{
-		ft_printf("Only one match left on the last row. You can only ");
-		ft_printf("ask to remove 1 match\n");
+		ft_printf("Only \033[1;33mone\033[0m match left on the last row. ");
+		ft_printf("You can only ask to remove 1 match\n");
 	}
 	else if (matches == 2)
 	{
-		ft_printf("2 matches left on the last row. How many matches");
-		ft_printf(" do you want to remove? (1 or 2)\n");
+		ft_printf("\033[1;33m2\033[0m matches left on the last row. ");
+		ft_printf("How many matches do you want to remove? (1 or 2)\n");
 	}
 	else if (matches >= 3)
 	{
-		ft_printf("%d", matches);
+		ft_printf("\033[1;33m%d\033[0m", matches);
 		ft_printf(" matches left on the last row. How many matches ");
 		ft_printf("do you want to remove? (1 to 3)\n");
 	}
 }
 
-void	delete_node(struct s_alum *alum)
-{
-	int		i;
-	t_node	*head;
-
-	head = alum->head;
-	alum->length--;
-	i = -1;
-	while (++i < alum->length - 1)
-		head = head->next;
-	alum->tail = head;
-}
-
-void	play_against_ai(struct s_alum *alum)
-{
-	char	*line;
-	int		value;
-
-	ft_printf("------The game begins!-----\n");
-	while (alum->head->number > 0)
-	{
-		print_list(alum);
-		ft_put_choice(alum->tail->number);
-		if (!(get_next_line(0, &line)))
-			break ;
-		value = ft_atoi(line);
-		if (value < 1 || value > 3 || value > alum->tail->number)
-			ft_put_choice(alum->tail->number);
-		else
-		{
-			alum->tail->number -= value;
-			if (alum->tail->number == 0)
-				delete_node(alum);
-
-		}
-		free(line);
-	}
-}
-
-void	play_against_person(struct s_alum *alum)
-{
-	ft_printf("------The game begins!-----\n");
-	print_list(alum);
-	// ft_printf("NUM: %d\n", alum->tail->number);	
-}
-
-int main(int argc, char **argv)
+int		main(int argc, char **argv)
 {
 	struct s_alum *alum;
 
@@ -251,30 +112,17 @@ int main(int argc, char **argv)
 	alum = (t_alum*)malloc(sizeof(t_alum));
 	alum_init(alum);
 	if (!argv[1])
-	{
 		parse_map_from_stdin(alum);
-		versus_who(alum);
-		alum->max = get_max(alum->head);
-		if (alum->player == 1)
-			play_against_ai(alum);
-		else if (alum->player == 2)
-			play_against_person(alum);
-		else
-			ft_error("Error. Wrong player.");
-	}
 	else
-	{
 		parse_map_from_file(alum, argv[1]);
-		versus_who(alum);
-		alum->max = get_max(alum->head);
-		if (alum->player == 1)
-			play_against_ai(alum);
-		else if (alum->player == 2)
-			play_against_person(alum);
-		else
-			ft_error("Error. Wrong player.");
-	}
-	ft_printf("\n");
+	versus_who(alum);
+	alum->max = get_max(alum->head);
+	if (alum->player == 1)
+		play_against_ai(alum);
+	else if (alum->player == 2)
+		play_against_person(alum);
+	else
+		ft_error("Error. Wrong player.");
 	system("leaks alum1");
 	return (0);
 }
